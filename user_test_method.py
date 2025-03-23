@@ -2,11 +2,10 @@ import cv2
 import mediapipe as mp
 import pickle
 import numpy as np
-import time
 
 # Load the trained model
-model_dict = pickle.load(open('model.p', 'rb'))
-model = model_dict['model']
+model_dict = pickle.load(open('user_model.p', 'rb'))
+model = model_dict['user_model']
 
 # Initialize MediaPipe Hands
 mp_hands = mp.solutions.hands
@@ -14,7 +13,6 @@ mp_drawing = mp.solutions.drawing_utils
 hands = mp_hands.Hands(static_image_mode=False, min_detection_confidence=0.3, min_tracking_confidence=0.3)
 
 # Check if labels are numeric or string
-#labels_dict = {0: 'A', 1: 'B', 2: 'C'}  # If your model predicts numbers
 labels_dict = {'A': 'A', 'B': 'B', 'C': 'C'}  # If your model predicts letters directly
 
 cap = cv2.VideoCapture(0)
@@ -53,12 +51,10 @@ while True:
             # Check if model outputs strings or integers
             if isinstance(prediction[0], str):  # Model predicts letters directly
                 predicted_character = prediction[0]
-                
             else:  # Model predicts numbers, map to letters
                 predicted_character = labels_dict.get(int(prediction[0]), "?")
 
             print(f"Predicted Letter: {predicted_character}")
-            
 
             # Display prediction on the frame
             cv2.putText(frame, predicted_character, (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
